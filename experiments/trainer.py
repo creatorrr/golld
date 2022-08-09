@@ -54,7 +54,7 @@ def augment(image, resolution: int = 64):
 
 
 def batch_indices(df, size):
-    new_midx = pd.MultiIndex.from_arrays((df.index //  size, df.index))
+    new_midx = pd.MultiIndex.from_arrays((df.index // size, df.index))
     df_midx = df.set_index(new_midx)
 
     return df_midx
@@ -107,10 +107,7 @@ def main(args):
     df = df.explode("images")
     images = df["images"].map(PIL.Image.fromarray)
 
-    dataset = Dataset.from_dict(dict(
-        image=images.to_list(),
-        caption=df["description"]
-    ))
+    dataset = Dataset.from_dict(dict(image=images.to_list(), caption=df["description"]))
 
     accelerator = Accelerator(mixed_precision=args.mixed_precision)
 
@@ -186,7 +183,6 @@ def main(args):
         dataset, batch_size=args.batch_size, shuffle=True
     )
 
-
     lr_scheduler = get_scheduler(
         "linear",
         optimizer=optimizer,
@@ -219,9 +215,7 @@ def main(args):
     total_train_batch_size = (
         args.batch_size * args.gradient_accumulation_steps * world_size
     )
-    max_steps = (
-        len(dataset) // args.gradient_accumulation_steps * args.num_epochs
-    )
+    max_steps = len(dataset) // args.gradient_accumulation_steps * args.num_epochs
     logger.info("***** Running training *****")
     logger.info(f"  Num examples = {len(dataset.dataset)}")
     logger.info(f"  Num Epochs = {args.num_epochs}")
